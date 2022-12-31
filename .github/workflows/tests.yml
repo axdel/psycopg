@@ -36,9 +36,6 @@ jobs:
       TMNET_DEV_API_KEY: ${{ secrets.TMNET_DEV_API_KEY }}
       TMNET_API_KEY: ${{ secrets.TMNET_API_KEY }}
 
-      # Enable to run tests using the minimum version of dependencies.
-      # PIP_CONSTRAINT: ${{ github.workspace }}/tests/constraints.txt
-
     steps:
       - uses: actions/checkout@v3
 
@@ -75,7 +72,14 @@ jobs:
           echo "DEPS=$DEPS shapely" >> $GITHUB_ENV
           echo "MARKERS=$MARKERS postgis" >> $GITHUB_ENV
 
-      - name: Install Python dependencies
+      - name: Configure to use the oldest dependencies
+        if: ${{ matrix.ext == 'min' }}
+        run: |
+          echo "DEPS=$DEPS dnspython shapely" >> $GITHUB_ENV
+          echo "PIP_CONSTRAINT=${{ github.workspace }}/tests/constraints.txt" \
+            >> $GITHUB_ENV
+
+      - name: Install Python packages
         run: pip install --editable $DEPS --config-settings editable-mode=strict
 
       - name: Install pytest-testmon (commit-based)
