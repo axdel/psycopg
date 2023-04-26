@@ -23,7 +23,3 @@ done
 pytest="python -bb -m pytest --color=yes --tmnet"
 
 $pytest -m "$markers" "$@" && exit 0
-
-$pytest -m "$markers" --lf --randomly-seed=last "$@" && exit 0
-
-$pytest -m "$markers" --lf --randomly-seed=last "$@"
