@@ -96,7 +96,7 @@ jobs:
           echo "NOT_MARKERS=$NOT_MARKERS subprocess" >> $GITHUB_ENV
 
       - name: Install Python dependencies
-        run: pip install $DEPS
+        run: pip install --editable $DEPS --config-settings editable-mode=strict
 
       - name: Install pytest-testmon (commit-based)
         run: pip install pytest_testmon@git+https://github.com/tarpas/pytest-testmon.git@2ff397cb459c434ef587bef4e064f0857440a267#egg=pytest_testmon
