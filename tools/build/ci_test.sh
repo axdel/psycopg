@@ -20,10 +20,6 @@ for m in ${NOT_MARKERS:-}; do
     markers="$markers not $m"
 done
 
-pytest="python -bb -m pytest --color=yes"
+pytest="python -bb -m pytest --color=yes --tmnet"
 
 $pytest -m "$markers" "$@" && exit 0
-
-$pytest -m "$markers" --lf --randomly-seed=last "$@" && exit 0
-
-$pytest -m "$markers" --lf --randomly-seed=last "$@"
