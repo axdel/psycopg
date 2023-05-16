@@ -26,20 +26,7 @@ jobs:
       matrix:
         include:
           # Test different combinations of Python, Postgres, libpq.
-          - {impl: python, python: "3.7", postgres: "postgres:10", libpq: newest}
-          - {impl: python, python: "3.8", postgres: "postgres:12"}
-          - {impl: python, python: "3.9", postgres: "postgres:13"}
           - {impl: python, python: "3.10", postgres: "postgres:14"}
-          - {impl: python, python: "3.11", postgres: "postgres:15", libpq: oldest}
-
-          - {impl: c, python: "3.7", postgres: "postgres:15", libpq: newest}
-          - {impl: c, python: "3.8", postgres: "postgres:13"}
-          - {impl: c, python: "3.9", postgres: "postgres:14"}
-          - {impl: c, python: "3.10", postgres: "postgres:13", libpq: oldest}
-          - {impl: c, python: "3.11", postgres: "postgres:10", libpq: newest}
-
-          - {impl: python, python: "3.9", ext: dns, postgres: "postgres:14"}
-          - {impl: python, python: "3.9", ext: postgis, postgres: "postgis/postgis"}
 
     env:
       PSYCOPG_IMPL: ${{ matrix.impl }}
@@ -47,6 +34,8 @@ jobs:
       PSYCOPG_TEST_DSN: "host=127.0.0.1 user=postgres"
       PGPASSWORD: password
       MARKERS: ""
+      TMNET_DEV_API_KEY: ${{ secrets.TMNET_DEV_API_KEY }}
+      TMNET_API_KEY: ${{ secrets.TMNET_API_KEY }}
 
       # Enable to run tests using the minimum version of dependencies.
       # PIP_CONSTRAINT: ${{ github.workspace }}/tests/constraints.txt
@@ -107,7 +96,10 @@ jobs:
           echo "NOT_MARKERS=$NOT_MARKERS subprocess" >> $GITHUB_ENV
 
       - name: Install Python dependencies
-        run: pip install $DEPS
+        run: pip install --editable $DEPS --config-settings editable-mode=strict
+
+      - name: Install pytest-testmon (commit-based)
+        run: pip install pytest_testmon@git+https://github.com/tarpas/pytest-testmon.git@b6b5a07ad19bd33711e9407407700ec4ce87e012#egg=pytest_testmon
 
       - name: Run tests
         run: ./tools/build/ci_test.sh
